@@ -22,6 +22,8 @@ class DefaultController extends Controller
         self::ARTICLE_TYPE_AUTHOR => 'Авторская статья',
     ];
 
+    const MAX_TAGS_IN_ARTICLE = 3;
+
     /**
      * @Route( "/", name="article.index" )
      */
@@ -121,7 +123,12 @@ class DefaultController extends Controller
 
                 case self::ARTICLE_TYPE_SIMPLE:
 
-                    $article->setTags( $this->_prepareTags($request->request->get('form')['tags']) );
+                    $tags = $this->_prepareTags( $request->request->get('form')['tags'] );
+                    if( count($tags) > self::MAX_TAGS_IN_ARTICLE ){
+                        $errors[] = 'Тэгов у статьи не может быть больше ' . self::MAX_TAGS_IN_ARTICLE;
+                    }
+
+                    $article->setTags( $tags );
 
                     if( is_a( $article->getAuthor(), Author::class ) ){
                         $em->remove( $article->getAuthor() );
@@ -143,15 +150,15 @@ class DefaultController extends Controller
                         $errors[] = 'Укажите сайт';
                     }
 
-                    if( !empty($errors) ){
-                        return $this->render('ArticleBundle:Default:create.html.twig', array(
-                            'form' => $form->createView(),
-                            'errors' => $errors,
-                        ));
-                    }
-
                     $article->setAuthor( $this->_prepareAuthor($values['author'], $values['author_site'], $article) );
                     break;
+            }
+
+            if( !empty($errors) ){
+                return $this->render('ArticleBundle:Default:create.html.twig', array(
+                    'form' => $form->createView(),
+                    'errors' => $errors,
+                ));
             }
 
             $currentTime = new \DateTime( 'now' );
@@ -275,7 +282,7 @@ class DefaultController extends Controller
     private function _prepareAuthor( $name, $site, $article )
     {
 
-        $author = is_null( $article->getId() ) || $article->getAuthor()->isEmpty()  ? new Author() : $article->getAuthor();
+        $author = is_null( $article->getId() ) || !is_a( $article->getAuthor(), Author::class ) ? new Author() : $article->getAuthor();
         $author->setName( $name );
         $author->setSite( $site );
         $author->setArticle( $article );
