@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+Список статей
+{% endblock %}
+
+{% block body %}
+    <div class="navigation" >
+        <a href="{{ path('article.edit') }}">Создать статью</a>
+        <a href="{{ path('article.index') }}">Все статьи</a>
+        <a href="{{ path('article.authors') }}">Авторские статьи</a>
+    </div>
+
+    <div class="articles" >
+        {% if articles is not empty %}
+
+            <table>
+                <tr>
+                    <th>Название</th>
+                    <th>Дата публикации</th>
+                    <th>Дата cоздания</th>
+                    <th>Дата обновления</th>
+                    <th>Информация</th>
+                    <th>Редактирование</th>
+                </tr>
+                {% for article in articles %}
+                    <tr>
+                        <td>
+                            <a href="{{ path('article.detail', { url: article.url }) }}">{{ article.name }}</a>
+                        </td>
+                        <td>{{ article.publishedAt.format( 'd.m.Y' ) }}</td>
+                        <td>{{ article.createdAt.format( 'd.m.Y' ) }}</td>
+                        <td>{{ article.updatedAt.format( 'd.m.Y' ) }}</td>
+                        <td>
+                            {% if article.tags is not empty %}
+                                <div>
+                                    <span><b>Список тэгов:</b></span>
+                                    {% for tag in article.tags %}
+                                        <div>
+                                            <a href="{{ path('article.by_tag', { tag: tag.name }) }}">{{ tag.name }}</a>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% if article.author is not empty %}
+                                <div>
+                                    <span><b>Автор:</b></span>
+                                    <div>
+                                        {{ article.author.name }} ( <a target="_blank" href="{{ article.author.site }}">{{ article.author.site }}</a> )
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ path('article.edit', { id: article.id }) }}">Редактировать</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+        {% else %}
+            Список статей пуст
+        {% endif %}
+    </div>
+
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        table td{
+            border: 1px solid #000;
+        }
+    </style>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+Статья:
+    {% if article is not empty %}
+        {{ article.name }}
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+
+    <div class="articles" >
+        {% if article is not empty %}
+            <h1>{{ article.name }}</h1>
+            <div>Дата публикации: {{ article.publishedAt.format( 'd.m.Y' ) }}</div>
+            <div>Дата cоздания: {{ article.createdAt.format( 'd.m.Y' ) }}</div>
+            <div>Дата обновления: {{ article.updatedAt.format( 'd.m.Y' ) }}</div>
+            {% if article.tags is not empty %}
+                <div>Список тэгов:
+                    {% for tag in article.tags %}
+
+                        <a href="{{ path('article.by_tag', { tag: tag.name }) }}">{{ tag.name }}</a>
+
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if article.author is not empty %}
+                <div>Автор: {{ article.author.name }} ( <a target="_blank" href="{{ article.author.site }}">{{ article.author.site }}</a> )</div>
+            {% endif %}
+
+            <div>
+                <div>Содержание:</div>
+                {{ article.text }}
+            </div>
+            <a href="{{ path('article.index') }}">К списку статей</a>
+
+        {% else %}
+            Статья не найдена
+        {% endif %}
+    </div>
+
+{% endblock %}

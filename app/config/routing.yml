@@ -1,3 +1,8 @@
+article:
+    resource: "@ArticleBundle/Controller/"
+    prefix:   /article
+    type: annotation
+
 app:
     resource: '@AppBundle/Controller/'
     type: annotation

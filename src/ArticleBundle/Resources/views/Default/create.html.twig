@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+Создание статьи
+{% endblock %}
+
+{% block body %}
+
+    {% if errors is not empty %}
+        <h3>Исправьте ошибки и отправьте данные заново</h3>
+        <ul>
+        {% for error in errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+    {{ form_end(form) }}
+
+    <div style="margin-top: 50px">
+
+        <a href="{{ path('article.index') }}">Назад</a>
+    </div>
+
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        label{
+            width: 180px;
+            display: inline-block;
+            margin: 15px 0;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+
+        function trigger_fields( obj ){
+
+            switch( obj.value  ){
+                case '1':
+
+                    setVisibleForClass( 'author_article_field', 'none' );
+                    setVisibleForClass( 'simple_article_field', 'block' );
+                    break;
+                case '2':
+
+                    setVisibleForClass( 'author_article_field', 'block' );
+                    setVisibleForClass( 'simple_article_field', 'none' );
+
+                    break;
+            }
+
+        }
+
+        function setVisibleForClass( className, type ){
+
+            var fields = document.getElementsByClassName( className );
+            var cnt = fields.length;
+            for( i = 0; i < cnt; i++ ){
+                fields[ i ].parentElement.style.display = type;
+            }
+
+        }
+
+
+        window.onload = function(){
+            var selectField = document.getElementById( 'form_type' );
+            if( selectField != null ){
+                trigger_fields( selectField )
+            }
+
+        };
+
+    </script>
+
+{% endblock %}
+
